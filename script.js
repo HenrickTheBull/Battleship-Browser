@@ -1,7 +1,13 @@
 const boardSize = 10;
-const shipLength = 4;
+const ships = [
+  { name: "Carrier", size: 5 },
+  { name: "Battleship", size: 4 },
+  { name: "Cruiser", size: 3 },
+  { name: "Submarine", size: 3 },
+  { name: "Destroyer", size: 2 }
+];
+
 let board = [];
-let ship;
 
 function generateBoard() {
   for (let i = 0; i < boardSize; i++) {
@@ -12,13 +18,31 @@ function generateBoard() {
   }
 }
 
-function placeShip() {
-  const direction = Math.floor(Math.random() * 2);
-  const startX = Math.floor(Math.random() * (boardSize - (direction ? shipLength : 0)));
-  const startY = Math.floor(Math.random() * (boardSize - (direction ? 0 : shipLength)));
-  for (let i = 0; i < shipLength; i++) {
-    board[startX + (direction ? i : 0)][startY + (direction ? 0 : i)] = 1;
-  }
+function placeShips() {
+  ships.forEach(ship => {
+    let placed = false;
+
+    while (!placed) {
+      const direction = Math.floor(Math.random() * 2);
+      const startX = Math.floor(Math.random() * (boardSize - (direction ? ship.size : 0)));
+      const startY = Math.floor(Math.random() * (boardSize - (direction ? 0 : ship.size)));
+      let valid = true;
+
+      for (let i = 0; i < ship.size; i++) {
+        if (board[startX + (direction ? i : 0)][startY + (direction ? 0 : i)] !== 0) {
+          valid = false;
+          break;
+        }
+      }
+
+      if (valid) {
+        for (let i = 0; i < ship.size; i++) {
+          board[startX + (direction ? i : 0)][startY + (direction ? 0 : i)] = 1;
+        }
+        placed = true;
+      }
+    }
+  });
 }
 
 function renderBoard() {
@@ -53,13 +77,13 @@ function checkWin() {
     }
   }
   if (remaining === 0) {
-    alert('Congratulations! You sunk the battleship!');
+    alert('Congratulations! You sunk all the ships!');
   }
 }
 
 function initGame() {
   generateBoard();
-  placeShip();
+  placeShips();
   renderBoard();
 }
 
